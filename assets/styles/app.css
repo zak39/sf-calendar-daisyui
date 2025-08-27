@@ -1,3 +1,7 @@
-body {
-    background-color: skyblue;
+@import "tailwindcss";
+@plugin "../vendor/daisyui/daisyui.index.js";
+
+@utility container {
+    margin-inline: auto;
+    padding-inline: 2rem;
 }
