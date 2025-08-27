@@ -59,4 +59,26 @@
     </div>
   </calendar-range>
 </div>
+
+<div class="max-w-lg mx-auto">
+  <h1 class="text-2xl font-bold mb-4">Sélection de période</h1>
+
+  <calendar-range id="myRange" class="cally bg-base-100 border border-base-300 shadow-lg rounded-box p-4">
+    <calendar-month></calendar-month>
+    <calendar-month offset="1"></calendar-month>
+  </calendar-range>
+
+  <p class="mt-4">📅 Valeur : <span id="output" class="font-semibold">aucune</span></p>
+</div>
+
+<div class="max-w-lg mx-auto">
+  <h1 class="text-2xl font-bold mb-4">Réservation type Airbnb</h1>
+
+  <calendar-range id="reservationCalendar" class="cally bg-base-100 border border-base-300 shadow-lg rounded-box p-4">
+    <calendar-month></calendar-month>
+    <calendar-month offset="1"></calendar-month>
+  </calendar-range>
+
+  <p class="mt-4">📅 Sélection : <span id="output" class="font-semibold">aucune</span></p>
+</div>
 {% endblock %}
