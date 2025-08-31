@@ -5,3 +5,9 @@
     margin-inline: auto;
     padding-inline: 2rem;
 }
+
+calendar-month {
+    &::part(disallowed) {
+        text-decoration: line-through;
+    }
+}
