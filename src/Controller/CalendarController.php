@@ -28,7 +28,19 @@ final class CalendarController extends AbstractController
             [
                 'start' => 'August 17, 2025',
                 'end' => 'August 19, 2025',
-            ]            
+            ],
+            [
+                'start' => 'September 5, 2025',
+                'end' => 'September 10, 2025',
+            ],
+            [
+                'start' => 'September 15, 2025',
+                'end' => 'September 20, 2025',
+            ],
+            [
+                'start' => 'October 25, 2025',
+                'end' => 'October 30, 2025',
+            ],
         ]);
     }
 }
