@@ -70,6 +70,10 @@ function rangeDatesToBlock(date, start, end) {
     return date >= start && date <= end
 }
 
+function getBaseUrl() {
+    return window.location.origin
+}
+
 const cal = document.getElementById("reservationCalendar");
 const output02 = document.getElementById("output");
 
@@ -102,13 +106,13 @@ cal.addEventListener("change", (e) => {
  * ===========================
  */
 
-const res = fetch('http://127.0.0.1:8000/dates-blocked')
+const res = fetch(`${getBaseUrl()}/dates-blocked`)
 
 res
     .then(respAPI => respAPI.json() )
     .then(dateBlockedAPI => {
         const datesBlockedFormatted = dateBlockedAPI.map(date => new DateBlocked(new Date(date.start), new Date(date.end)))
-        
+
         cal.isDateDisallowed = (date) => {
             date.setHours(0,0,0,0)
             return datesBlockedFormatted.some(dateBlocked => rangeDatesToBlock(date, dateBlocked.start, dateBlocked.end))
