@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Refuge new{% endblock %}
+
+{% block body %}
+<h1>Nouveau refuge</h1>
+
+{{ form_start(form) }}
+    {{ form_row(form.nom) }}
+    {{ form_row(form.address) }}
+    {{ form_row(form.dateStart) }}
+    {{ form_row(form.dateEnd) }}
+
+    <button type="submit"
+        class="btn btn-primary mt-4">
+        Créer
+    </button>
+{{ form_end(form) }}
+
+{% endblock %}

@@ -3,11 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Refuge;
+use App\Form\RefugeType;
 use App\Repository\RefugeRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -72,6 +74,26 @@ final class CalendarController extends AbstractController
 
         return $this->render('refuge/index.html.twig', [
             'refuges' => $refuges
+        ]);
+    }
+
+    #[Route('/refuges/new', name: 'app_refuge_new')]
+    public function newRefuge(Request $request, ?Refuge $refuge, EntityManagerInterface $em): Response
+    {
+        $refuge = new Refuge();
+
+        $form = $this->createForm(RefugeType::class, $refuge);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            $em->persist($refuge);
+            $em->flush();
+
+            return $this->redirectToRoute('app_refuge');
+        }
+
+        return $this->render('refuge/new.html.twig', [
+            'form' => $form
         ]);
     }
 }

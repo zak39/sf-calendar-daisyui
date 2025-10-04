@@ -3,10 +3,10 @@
 {% block title %}Refuge list{% endblock %}
 
 {% block body %}
-<h1>List des refuges</h1>
+<h1 class="mb-4">List des refuges</h1>
 
 {% for refuge in refuges %}
-<div class="card card-border bg-base-100 w-96">
+<div class="card card-border bg-base-100 w-96 mb-4">
   <div class="card-body">
     <h2 class="card-title">{{ refuge.nom }}</h2>
     <small>{{ refuge.address }}</small>
