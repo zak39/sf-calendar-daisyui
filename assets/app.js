@@ -20,12 +20,15 @@ const output = document.getElementById("output");
  */
 
 // ⚡ On définit la fonction isDateDisallowed
-range.isDateDisallowed = (date) => {
-    const day = date.getDay();
-    console.log('day', day)
-    // Interdire samedi (6) et dimanche (0)
-    return day === 0 || day === 6;
-};
+
+if (range !== null) {
+    range.isDateDisallowed = (date) => {
+        const day = date.getDay();
+        console.log('day', day)
+        // Interdire samedi (6) et dimanche (0)
+        return day === 0 || day === 6;
+    };
+}
 
 /**
  * ===========================
@@ -33,21 +36,25 @@ range.isDateDisallowed = (date) => {
  * ===========================
  */
 
-// ⚡ On capte la valeur quand on sélectionne
-range.addEventListener("change", (e) => {
-    output.textContent = e.target.value;
-});
 
-range.isDateDisallowed = (date) => {
-  const today = new Date();
-  today.setHours(0,0,0,0); // reset heures
-  return date < today; // interdit toute date avant aujourd’hui
-}
+if (range !== null) {
 
-range.isDateDisallowed = (date) => {
-    const dateReservation = new Date('August 26, 2025');
-    // const day = date.getDay()
-    return dateReservation.toDateString() === date.toDateString()
+    // ⚡ On capte la valeur quand on sélectionne
+    range.addEventListener("change", (e) => {
+        output.textContent = e.target.value;
+    });
+
+    range.isDateDisallowed = (date) => {
+    const today = new Date();
+    today.setHours(0,0,0,0); // reset heures
+    return date < today; // interdit toute date avant aujourd’hui
+    }
+
+    range.isDateDisallowed = (date) => {
+        const dateReservation = new Date('August 26, 2025');
+        // const day = date.getDay()
+        return dateReservation.toDateString() === date.toDateString()
+    }
 }
 
 /**
@@ -96,9 +103,11 @@ cal.isDateDisallowed = (date) => {
 };
 */
 
-cal.addEventListener("change", (e) => {
-    output02.textContent = e.target.value;
-});
+if (cal !== null) {
+    cal.addEventListener("change", (e) => {
+        output02.textContent = e.target.value;
+    });
+}
 
 /**
  * ===========================
@@ -106,15 +115,42 @@ cal.addEventListener("change", (e) => {
  * ===========================
  */
 
-const res = fetch(`${getBaseUrl()}/dates-blocked`)
 
-res
-    .then(respAPI => respAPI.json() )
-    .then(dateBlockedAPI => {
-        const datesBlockedFormatted = dateBlockedAPI.map(date => new DateBlocked(new Date(date.start), new Date(date.end)))
+if (cal !== null) {
+    const res = fetch(`${getBaseUrl()}/dates-blocked`)
+    
+    res
+        .then(respAPI => respAPI.json() )
+        .then(dateBlockedAPI => {
+            const datesBlockedFormatted = dateBlockedAPI.map(date => new DateBlocked(new Date(date.start), new Date(date.end)))
+    
+            cal.isDateDisallowed = (date) => {
+                date.setHours(0,0,0,0)
+                return datesBlockedFormatted.some(dateBlocked => rangeDatesToBlock(date, dateBlocked.start, dateBlocked.end))
+            };
+        })
+}    
 
-        cal.isDateDisallowed = (date) => {
-            date.setHours(0,0,0,0)
-            return datesBlockedFormatted.some(dateBlocked => rangeDatesToBlock(date, dateBlocked.start, dateBlocked.end))
-        };
+
+/**
+ * ===========================
+ *          From form
+ * ===========================
+ */
+
+const calendarForm = document.getElementById('reservationFromCalendar')
+
+if (calendarForm !== null) {
+    calendarForm.addEventListener('change', (e) => {
+        const dateRangeSelected = e.target.value
+        const dateRangeSplitted = dateRangeSelected.split('/') // 2025-09-25/2025-09-26
+        const dateStart = dateRangeSplitted[0]
+        const dateEnd = dateRangeSplitted[1]
+    
+        const dateStartEl = document.querySelector('.dateStartForm')
+        const dateEndEl = document.querySelector('.dateEndForm')
+    
+        dateStartEl.value = dateStart
+        dateEndEl.value = dateEnd
     })
+}

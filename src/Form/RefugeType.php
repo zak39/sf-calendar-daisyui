@@ -3,10 +3,13 @@
 namespace App\Form;
 
 use App\Entity\Refuge;
+use DateTime;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Event\PreSubmitEvent;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RefugeType extends AbstractType
@@ -32,18 +35,26 @@ class RefugeType extends AbstractType
                     'class' => 'input'
                 ],
             ])
-            ->add('dateStart', DateType::class, [
-                'label' => 'Date de la première nuité',
-                'label_attr' => [
-                    'class' => 'input'
-                ],
+            ->add('dateStart', HiddenType::class, [
+                'attr' => [
+                    'class' => 'dateStartForm',
+                ]
             ])
-            ->add('dateEnd', DateType::class, [
-                'label' => 'Date de la dernière nuité',
-                'label_attr' => [
-                    'class' => 'input'
-                ],
+            ->add('dateEnd', HiddenType::class, [
+                'attr' => [
+                    'class' => 'dateEndForm'
+                ]
             ])
+
+            ->addEventListener(FormEvents::PRE_SUBMIT, function (PreSubmitEvent $event): void {
+                $data = $event->getData();
+                $dateStart = new DateTime($data['dateStart']);
+                $dateEnd = new DateTime($data['dateEnd']);
+
+                $data['dateStart'] = $dateStart;
+                $data['dateEnd'] = $dateEnd;
+                $event->setData($data);
+            })
         ;
     }
 

@@ -8,6 +8,16 @@
 {{ form_start(form) }}
     {{ form_row(form.nom) }}
     {{ form_row(form.address) }}
+    <div class="">
+        <h1 class="text-2xl font-bold mb-4">Réservation type Airbnb</h1>
+
+        <div class="flex gap-1.5">
+            <calendar-range id="reservationFromCalendar" class="cally bg-base-100 border border-base-300 shadow-lg rounded-box p-4">
+                <calendar-month></calendar-month>
+                <calendar-month offset="1"></calendar-month>
+            </calendar-range>
+        </div>
+    </div>
     {{ form_row(form.dateStart) }}
     {{ form_row(form.dateEnd) }}
 
