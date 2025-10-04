@@ -2,6 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Refuge;
+use App\Repository\RefugeRepository;
+use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -45,6 +49,29 @@ final class CalendarController extends AbstractController
                 'start' => 'October 9, 2025',
                 'end' => 'October 10, 2025',
             ]
+        ]);
+    }
+
+    #[Route('/refuges', name: 'app_refuge')]
+    public function findRefuges(RefugeRepository $repository, EntityManagerInterface $em): Response
+    {
+        $refuges = $repository->findAll();
+
+        if (empty($refuges)) {
+            $refuge = new Refuge();
+            $refuge
+                ->setNom('Chalet des eaux')
+                ->setAddress('au lac du boulevent')
+                ->setDateStart(new DateTime('16 october 2025'))
+                ->setDateEnd(new DateTime('19 october 2025'))
+            ;
+
+            $em->persist($refuge);
+            $em->flush();
+        }
+
+        return $this->render('refuge/index.html.twig', [
+            'refuges' => $refuges
         ]);
     }
 }

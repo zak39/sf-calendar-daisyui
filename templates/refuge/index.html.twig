@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Refuge list{% endblock %}
+
+{% block body %}
+<h1>List des refuges</h1>
+
+{% for refuge in refuges %}
+<div class="card card-border bg-base-100 w-96">
+  <div class="card-body">
+    <h2 class="card-title">{{ refuge.nom }}</h2>
+    <small>{{ refuge.address }}</small>
+    <div class="card-actions justify-end">
+      <ul>
+        <li>date de la première nuit: {{ refuge.dateStart|date('j F Y') }}</li>
+        <li>date de la dernière nuit: {{ refuge.dateEnd|date('j F Y') }}</li>
+      </ul>
+    </div>
+  </div>
+</div>    
+{% endfor %}
+
+{% endblock %}
