@@ -24,8 +24,18 @@ final class CalendarController extends AbstractController
     }
 
     #[Route('/dates-blocked', name: 'app_calendar_dates_blocked')]
-    public function datesBlocked(): Response
+    public function datesBlocked(RefugeRepository $repository): Response
     {
+        $reservationDates = $repository->findReservationsDateRange();
+        $reservationDates = array_map(function ($dates) {
+            $dates['start'] = $dates['dateStart']->format('F j, Y');
+            $dates['end'] = $dates['dateEnd']->format('F j, Y');
+            return $dates;
+         }, $reservationDates);
+        
+        return new JsonResponse($reservationDates);
+
+        /*
         return new JsonResponse([
             [
                 'start' => 'August 1, 2025',
@@ -52,6 +62,7 @@ final class CalendarController extends AbstractController
                 'end' => 'October 10, 2025',
             ]
         ]);
+        */
     }
 
     #[Route('/refuges', name: 'app_refuge')]

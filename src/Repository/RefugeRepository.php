@@ -16,6 +16,14 @@ class RefugeRepository extends ServiceEntityRepository
         parent::__construct($registry, Refuge::class);
     }
 
+    public function findReservationsDateRange(): array {
+        return $this->createQueryBuilder('r')
+            ->select('r.dateStart, r.dateEnd')
+            ->getQuery()
+            ->execute()
+        ;
+    }
+
     //    /**
     //     * @return Refuge[] Returns an array of Refuge objects
     //     */

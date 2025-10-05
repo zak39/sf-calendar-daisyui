@@ -141,6 +141,19 @@ if (cal !== null) {
 const calendarForm = document.getElementById('reservationFromCalendar')
 
 if (calendarForm !== null) {
+    const response = fetch(`${getBaseUrl()}/dates-blocked`)
+
+    response
+        .then(respAPI => respAPI.json() )
+        .then(dateBlockedAPI => {
+            const datesBlockedFormatted = dateBlockedAPI.map(date => new DateBlocked(new Date(date.start), new Date(date.end)))
+    
+            calendarForm.isDateDisallowed = (date) => {
+                date.setHours(0,0,0,0)
+                return datesBlockedFormatted.some(dateBlocked => rangeDatesToBlock(date, dateBlocked.start, dateBlocked.end))
+            };
+        })
+    
     calendarForm.addEventListener('change', (e) => {
         const dateRangeSelected = e.target.value
         const dateRangeSplitted = dateRangeSelected.split('/') // 2025-09-25/2025-09-26
