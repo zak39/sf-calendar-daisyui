@@ -6,7 +6,7 @@ use App\Entity\Refuge;
 use DateTime;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Event\PreSubmitEvent;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
@@ -35,24 +35,24 @@ class RefugeType extends AbstractType
                     'class' => 'input'
                 ],
             ])
-            ->add('dateStart', HiddenType::class, [
-                'attr' => [
-                    'class' => 'dateStartForm',
-                ]
-            ])
-            ->add('dateEnd', HiddenType::class, [
-                'attr' => [
-                    'class' => 'dateEndForm'
-                ]
+            ->add('reservations', CollectionType::class, [
+                'entry_type' => ReservationType::class,
+                'entry_options' => ['label' => false],
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'label' => false,
             ])
 
             ->addEventListener(FormEvents::PRE_SUBMIT, function (PreSubmitEvent $event): void {
                 $data = $event->getData();
-                $dateStart = new DateTime($data['dateStart']);
-                $dateEnd = new DateTime($data['dateEnd']);
 
-                $data['dateStart'] = $dateStart;
-                $data['dateEnd'] = $dateEnd;
+                $dateStart = new DateTime($data['reservations'][0]['dateStart']);
+                $dateEnd = new DateTime($data['reservations'][0]['dateEnd']);
+
+                $data['reservations'][0]['dateStart'] = $dateStart;
+                $data['reservations'][0]['dateEnd'] = $dateEnd;
+
                 $event->setData($data);
             })
         ;

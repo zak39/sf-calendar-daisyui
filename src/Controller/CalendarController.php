@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Refuge;
+use App\Entity\Reservation;
 use App\Form\RefugeType;
 use App\Repository\RefugeRepository;
 use DateTime;
@@ -26,13 +27,22 @@ final class CalendarController extends AbstractController
     #[Route('/dates-blocked', name: 'app_calendar_dates_blocked')]
     public function datesBlocked(RefugeRepository $repository): Response
     {
-        $reservationDates = $repository->findReservationsDateRange();
+        $refuges = $repository->findAll();
+        $reservationDates = array_map(function (Refuge $refuge) {
+            $reservation = $refuge->getReservations()[0];
+            return [
+                'dateStart' => $reservation?->getDateStart(),
+                'dateEnd' => $reservation?->getDateEnd(),
+            ];
+        }, $refuges);
+
+         // Format the dates to match FullCalendar's expected format
         $reservationDates = array_map(function ($dates) {
             $dates['start'] = $dates['dateStart']->format('F j, Y');
             $dates['end'] = $dates['dateEnd']->format('F j, Y');
             return $dates;
          }, $reservationDates);
-        
+
         return new JsonResponse($reservationDates);
 
         /*
@@ -70,13 +80,19 @@ final class CalendarController extends AbstractController
     {
         $refuges = $repository->findAll();
 
+        // dd($refuges[0]->getReservations()[0]?->getdateStart());
+
+         // If no refuge in database, create one
+
         if (empty($refuges)) {
             $refuge = new Refuge();
             $refuge
                 ->setNom('Chalet des eaux')
                 ->setAddress('au lac du boulevent')
-                ->setDateStart(new DateTime('16 october 2025'))
-                ->setDateEnd(new DateTime('19 october 2025'))
+                ->addReservation((new Reservation())
+                    ->setDateStart(new DateTime('16 october 2025'))
+                    ->setDateEnd(new DateTime('19 october 2025'))
+                )
             ;
 
             $em->persist($refuge);
@@ -92,9 +108,12 @@ final class CalendarController extends AbstractController
     public function newRefuge(Request $request, ?Refuge $refuge, EntityManagerInterface $em): Response
     {
         $refuge = new Refuge();
+        $refuge->addReservation(new Reservation());
 
         $form = $this->createForm(RefugeType::class, $refuge);
         $form->handleRequest($request);
+
+        // dd($refuge);
 
         if ($form->isSubmitted()) {
             $em->persist($refuge);

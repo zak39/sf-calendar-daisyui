@@ -12,12 +12,12 @@
     <small>{{ refuge.address }}</small>
     <div class="card-actions justify-end">
       <ul>
-        <li>date de la première nuit: {{ refuge.dateStart|date('j F Y') }}</li>
-        <li>date de la dernière nuit: {{ refuge.dateEnd|date('j F Y') }}</li>
+        <li>date de la première nuit: {{ refuge.reservations[0].dateStart|date('j F Y') }}</li>
+        <li>date de la dernière nuit: {{ refuge.reservations[0].dateEnd|date('j F Y') }}</li>
       </ul>
     </div>
   </div>
-</div>    
+</div>
 {% endfor %}
 
 {% endblock %}

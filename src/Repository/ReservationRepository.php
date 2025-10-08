@@ -2,31 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\Refuge;
+use App\Entity\Reservation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Refuge>
+ * @extends ServiceEntityRepository<Reservation>
  */
-class RefugeRepository extends ServiceEntityRepository
+class ReservationRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Refuge::class);
-    }
-
-    #[\Deprecated('the dateStart and dateEnd fields have been removed from the Refuge entity')]
-    public function findReservationsDateRange(): array {
-        return $this->createQueryBuilder('r')
-            ->select('r.dateStart, r.dateEnd')
-            ->getQuery()
-            ->execute()
-        ;
+        parent::__construct($registry, Reservation::class);
     }
 
     //    /**
-    //     * @return Refuge[] Returns an array of Refuge objects
+    //     * @return Reservation[] Returns an array of Reservation objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -40,7 +31,7 @@ class RefugeRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Refuge
+    //    public function findOneBySomeField($value): ?Reservation
     //    {
     //        return $this->createQueryBuilder('r')
     //            ->andWhere('r.exampleField = :val')

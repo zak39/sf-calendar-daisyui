@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\RefugeRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RefugeRepository::class)]
@@ -19,11 +21,16 @@ class Refuge
     #[ORM\Column(length: 255)]
     private ?string $address = null;
 
-    #[ORM\Column]
-    private ?\DateTime $dateStart = null;
+    /**
+     * @var Collection<int, Reservation>
+     */
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'refuge', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $reservations;
 
-    #[ORM\Column]
-    private ?\DateTime $dateEnd = null;
+    public function __construct()
+    {
+        $this->reservations = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -54,26 +61,32 @@ class Refuge
         return $this;
     }
 
-    public function getDateStart(): ?\DateTime
+    /**
+     * @return Collection<int, Reservation>
+     */
+    public function getReservations(): Collection
     {
-        return $this->dateStart;
+        return $this->reservations;
     }
 
-    public function setDateStart(\DateTime $dateStart): static
+    public function addReservation(Reservation $reservation): static
     {
-        $this->dateStart = $dateStart;
+        if (!$this->reservations->contains($reservation)) {
+            $this->reservations->add($reservation);
+            $reservation->setRefuge($this);
+        }
 
         return $this;
     }
 
-    public function getDateEnd(): ?\DateTime
+    public function removeReservation(Reservation $reservation): static
     {
-        return $this->dateEnd;
-    }
-
-    public function setDateEnd(\DateTime $dateEnd): static
-    {
-        $this->dateEnd = $dateEnd;
+        if ($this->reservations->removeElement($reservation)) {
+            // set the owning side to null (unless already changed)
+            if ($reservation->getRefuge() === $this) {
+                $reservation->setRefuge(null);
+            }
+        }
 
         return $this;
     }
