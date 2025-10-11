@@ -3,13 +3,10 @@
 namespace App\Form;
 
 use App\Entity\Refuge;
-use DateTime;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Event\PreSubmitEvent;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RefugeType extends AbstractType
@@ -43,18 +40,6 @@ class RefugeType extends AbstractType
                 'by_reference' => false,
                 'label' => false,
             ])
-
-            ->addEventListener(FormEvents::PRE_SUBMIT, function (PreSubmitEvent $event): void {
-                $data = $event->getData();
-
-                $dateStart = new DateTime($data['reservations'][0]['dateStart']);
-                $dateEnd = new DateTime($data['reservations'][0]['dateEnd']);
-
-                $data['reservations'][0]['dateStart'] = $dateStart;
-                $data['reservations'][0]['dateEnd'] = $dateEnd;
-
-                $event->setData($data);
-            })
         ;
     }
 
