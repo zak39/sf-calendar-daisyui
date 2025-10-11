@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\RefugeRepository;
+use App\Validator\DateAvailability;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -24,6 +25,7 @@ class Refuge
     /**
      * @var Collection<int, Reservation>
      */
+    #[DateAvailability]
     #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'refuge', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $reservations;
 

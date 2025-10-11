@@ -16,6 +16,19 @@ class ReservationRepository extends ServiceEntityRepository
         parent::__construct($registry, Reservation::class);
     }
 
+    public function rangeDateAvailable(\DateTimeInterface $start, \DateTimeInterface $end): bool
+    {
+        $qb = $this->createQueryBuilder('r');
+        $qb->where('r.dateStart < :end')
+            ->andWhere('r.dateEnd > :start')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end);
+
+        $conflictingReservations = $qb->getQuery()->getResult();
+
+        return count($conflictingReservations) === 0;
+    }
+
     //    /**
     //     * @return Reservation[] Returns an array of Reservation objects
     //     */

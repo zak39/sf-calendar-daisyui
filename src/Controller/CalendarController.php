@@ -113,9 +113,7 @@ final class CalendarController extends AbstractController
         $form = $this->createForm(RefugeType::class, $refuge);
         $form->handleRequest($request);
 
-        // dd($refuge);
-
-        if ($form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($refuge);
             $em->flush();
 

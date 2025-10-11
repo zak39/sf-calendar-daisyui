@@ -25,12 +25,14 @@ class ReservationType extends AbstractType
                     'class' => 'dateStartForm input',
                 ],
                 'label' => false,
+                'error_bubbling' => false,
             ])
             ->add('dateEnd', HiddenType::class, [
                 'attr' => [
                     'class' => 'dateEndForm input',
                 ],
                 'label' => false,
+                'error_bubbling' => false,
             ])
         ;
 
