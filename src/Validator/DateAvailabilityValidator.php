@@ -34,18 +34,27 @@ final class DateAvailabilityValidator extends ConstraintValidator
 
         $reservation = $value[0];
 
-        $dateStatrt = $reservation->getDateStart();
+        $dateStart = $reservation->getDateStart();
         $dateEnd = $reservation->getDateEnd();
 
-        $isAvailable = $this->reservationRepository->rangeDateAvailable($dateStatrt, $dateEnd);
+        $isAvailable = $this->reservationRepository->rangeDateAvailable($dateStart, $dateEnd);
+
+        $datesBlocked = $this->reservationRepository->getReservationsBlocked($dateStart, $dateEnd);
+
+        $datesBlocked = array_map(fn ($date) => [ 'start' => $date->getDateStart()->format('d F Y'), 'end' => $date->getDateEnd()->format('d F Y') ], $datesBlocked);
+        $datesBlocked = array_map(fn ($date) => "- between $date[start] and $date[end]", $datesBlocked);
+        $datesBlocked = implode("\n", $datesBlocked);
+        $message = $constraint->message;
+        $message .= "\n\nThese dates are not possible:\n\n$datesBlocked";
+
 
         if ($isAvailable) {
             return;
         }
 
         // TODO: implement the validation here
-        $this->context->buildViolation($constraint->message)
-            ->setParameter('{{ start }}', $dateStatrt->format('d F Y'))
+        $this->context->buildViolation($message)
+            ->setParameter('{{ start }}', $dateStart->format('d F Y'))
             ->setParameter('{{ end }}', $dateEnd->format('d F Y'))
             ->atPath('[0].dateStart')
             ->addViolation()

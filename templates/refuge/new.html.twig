@@ -4,14 +4,20 @@
 
 {% block body %}
 <h1>Nouveau refuge</h1>
-
-{{ form_start(form) }}
+<div id="js-blocked-intervals"
+     data-blocked="{{ datesBlocked|json_encode|e('html_attr') }}">
+</div>
+{{ form_start(form, { attr: {
+    "data-turbo": "false"
+} }) }}
     {{ form_row(form.nom) }}
     {{ form_row(form.address) }}
     <div class="mt-4 mb-4">
         <label>Sélectionner une plage de réservation</label>
         <div class="flex gap-1.5">
-            <calendar-range id="reservationFromCalendar" class="cally bg-base-100 border border-base-300 shadow-lg rounded-box p-4">
+            <calendar-range id="reservationFromCalendar"
+                class="cally bg-base-100 border border-base-300 shadow-lg rounded-box p-4"
+                onChange="updateRangeDate(event)">
                 <calendar-month></calendar-month>
                 <calendar-month offset="1"></calendar-month>
             </calendar-range>
@@ -25,7 +31,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span>{{ form_errors(form.reservations[0].dateStart) }}</span>
+            <span class="whitespace-pre-line">{{ form_errors(form.reservations[0].dateStart) }}</span>
         </div>
     {% endif %}
 
@@ -35,4 +41,40 @@
     </button>
 {{ form_end(form) }}
 
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script defer>
+function updateRangeDate(e) {
+    const dateStartEl = document.querySelector('.dateStartForm');
+    const dateEndEl = document.querySelector('.dateEndForm');
+    const dateRangeSelected = e.target.value
+    const dateRangeSplitted = dateRangeSelected.split('/') // 2025-09-25/2025-09-26
+    const dateStart = dateRangeSplitted[0]
+    const dateEnd = dateRangeSplitted[1]
+
+    dateStartEl.value = dateStart
+    dateEndEl.value = dateEnd
+}
+
+function loadBlockedDates() {
+    const calendar = document.getElementById('reservationFromCalendar')
+    console.log(calendar)
+    const blockedJson = document.getElementById('js-blocked-intervals').dataset.blocked
+    const blocked = JSON.parse(blockedJson).map(i => ({
+        start: new Date(i.start),
+        end: new Date(i.end)
+    }))
+
+    calendar.isDateDisallowed = date => {
+        date.setHours(0,0,0,0)
+        return blocked.some(i => date >= i.start && date <= i.end)
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadBlockedDates()
+});
+</script>
 {% endblock %}

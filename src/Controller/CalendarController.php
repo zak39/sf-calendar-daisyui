@@ -6,6 +6,7 @@ use App\Entity\Refuge;
 use App\Entity\Reservation;
 use App\Form\RefugeType;
 use App\Repository\RefugeRepository;
+use App\Service\DateService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -105,10 +106,12 @@ final class CalendarController extends AbstractController
     }
 
     #[Route('/refuges/new', name: 'app_refuge_new')]
-    public function newRefuge(Request $request, ?Refuge $refuge, EntityManagerInterface $em): Response
+    public function newRefuge(Request $request, ?Refuge $refuge, EntityManagerInterface $em, DateService $dateService): Response
     {
         $refuge = new Refuge();
         $refuge->addReservation(new Reservation());
+
+        $datesBlocked = $dateService->getDatesBlocked();
 
         $form = $this->createForm(RefugeType::class, $refuge);
         $form->handleRequest($request);
@@ -121,7 +124,8 @@ final class CalendarController extends AbstractController
         }
 
         return $this->render('refuge/new.html.twig', [
-            'form' => $form
+            'form' => $form,
+            'datesBlocked' => $datesBlocked,
         ]);
     }
 }

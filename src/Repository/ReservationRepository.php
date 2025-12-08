@@ -29,6 +29,18 @@ class ReservationRepository extends ServiceEntityRepository
         return count($conflictingReservations) === 0;
     }
 
+    public function getReservationsBlocked(\DateTimeInterface $start, \DateTimeInterface $end): array
+    {
+        $qb = $this->createQueryBuilder('r');
+        $qb->where('r.dateStart < :end')
+            ->andWhere('r.dateEnd > :start')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end);
+
+        return $qb->getQuery()->getResult();
+
+    }
+
     //    /**
     //     * @return Reservation[] Returns an array of Reservation objects
     //     */
